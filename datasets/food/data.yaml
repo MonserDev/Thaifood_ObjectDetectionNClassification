@@ -1,9 +1,16 @@
-train: ./food/train/images
-val: ./food/valid/images
-test: ./food/test/images
+# train: ./food/train/images
+# val: ./food/valid/images
+# test: ./food/test/images
+train: C:/work/cs/pj/Thaifood_ObjectDetectionNClassification/datasets/food/train/images
+val: C:/work/cs/pj/Thaifood_ObjectDetectionNClassification/datasets/food/valid/images
+test: C:/work/cs/pj/Thaifood_ObjectDetectionNClassification/datasets/food/test/images
 
 nc: 3
-names: ['1 0.48271875 0.8134479166666667 0.28178125 0.18502083333333333', '1 0.7794062500000001 0.76009375 0.2809375 0.3734375', 'plate']
+names: ['dish1', 'dish2', 'plate']
+
+
+# nc: 3
+# names: ['1 0.48271875 0.8134479166666667 0.28178125 0.18502083333333333', '1 0.7794062500000001 0.76009375 0.2809375 0.3734375', 'plate']
 
 roboflow:
   workspace: subhash-pathirana-cdryb
