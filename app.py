@@ -6,7 +6,7 @@ from PIL import Image
 
 # Load YOLOv11 detection and classification models
 detection_model = YOLO("C:/Users/niwat maneewong/OneDrive/Desktop/First/homwork/CS/Thaifood_ObjectDetectionNClassification/datasets/food/runs/detect/train14/weights/best.pt")       # e.g. train14/best.pt
-classification_model = YOLO("path/to/classification_model.pt")  # e.g. class/best.pt
+classification_model = YOLO("C:/Users/niwat maneewong/OneDrive/Desktop/First/homwork/CS/Thaifood_ObjectDetectionNClassification/model_best_vloss_resnet34.pth")  # e.g. class/best.pt
 
 # Function to process image
 def detect_and_classify(image):
@@ -41,9 +41,50 @@ def detect_and_classify(image):
 iface = gr.Interface(
     fn=detect_and_classify,
     inputs=gr.Image(type="pil", label="📷 Upload Thai Food Image"),
-    outputs=gr.Gallery(label="🍛 Detected & Classified Dishes").style(grid=[2], height="auto"),
+    outputs=gr.Gallery(label="🍛 Detected & Classified Dishes"),
     title="🍽️ Thai Food Detector & Classifier",
     description="Upload an image containing Thai dishes. The system will detect each dish, crop it, and classify it using YOLOv11."
 )
 
 iface.launch()
+#########################################################################
+#### crop image
+# import gradio as gr
+# from ultralytics import YOLO
+# import cv2
+# import numpy as np
+# from PIL import Image
+
+# # Load YOLOv11 object detection model
+# detection_model = YOLO("C:/Users/niwat maneewong/OneDrive/Desktop/First/homwork/CS/Thaifood_ObjectDetectionNClassification/datasets/food/runs/detect/train14/weights/best.pt")
+
+# def detect_and_crop(image):
+#     image_bgr = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+#     results = detection_model(image_bgr)
+
+#     cropped_images = []
+
+#     for result in results:
+#         boxes = result.boxes
+#         if boxes is None:
+#             continue
+#         for box in boxes:
+#             x1, y1, x2, y2 = map(int, box.xyxy[0])
+#             cropped = image_bgr[y1:y2, x1:x2]
+#             crop_rgb = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB)
+#             pil_crop = Image.fromarray(crop_rgb)
+#             cropped_images.append(pil_crop)
+
+#     return cropped_images if cropped_images else ["No objects detected."]
+
+# # Gradio interface
+# iface = gr.Interface(
+#     fn=detect_and_crop,
+#     inputs=gr.Image(type="pil", label="📷 Upload Thai Food Image"),
+#     outputs=gr.Gallery(label="🖼️ Cropped Food Items").style(grid=[2], height="auto"),
+#     title="🍛 Thai Food Detection Only",
+#     description="Upload an image of Thai food. This will detect and crop each dish using YOLOv11."
+# )
+
+# iface.launch()
+#########################################################################
