@@ -1,8 +1,8 @@
-jumatplotlib==3.10.1
+matplotlib==3.10.1
 numpy==1.26.4
 Pillow==9.5.0
-torch==2.1.2
-torcheval==0.0.7
-torchvision==0.16.2
+# torch==2.1.2
+# torcheval==0.0.7
+# torchvision==0.16.2
 notebook
 ultralytics
