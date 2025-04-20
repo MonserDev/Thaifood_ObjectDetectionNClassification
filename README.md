@@ -1,6 +1,6 @@
 # 🍽️ Thai Food Detector & Classifier
 
-This project is a Thai Food Detection and Classification System developed for the course ITCS454 Special Topic in Computer Science at ICT Mahidol.
+**This project is a Thai Food Detection and Classification System developed for the course ITCS454 Special Topic in Computer Science at ICT Mahidol.**
 
 * 1. Users can upload an image containing Thai dishes, and the system performs the following:
 
@@ -93,6 +93,8 @@ optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 - Use `datasetcleaner.py` to detect and remove corrupted images.
 
 ![Corrupted image example](image/image.png)
+
+---
 
 ## Example interface
 ![Corrupted image example](image/interface.png)
