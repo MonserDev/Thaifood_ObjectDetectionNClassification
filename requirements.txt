@@ -1,8 +1,14 @@
+gradio==5.25.2
 matplotlib==3.10.1
-numpy==1.26.4
+numpy==2.2.5
+opencv_contrib_python==4.11.0.86
+opencv_contrib_python_headless==4.11.0.86
+opencv_python==4.7.0.72
+opencv_python_headless==4.11.0.86
 Pillow==9.5.0
-# torch==2.1.2
-# torcheval==0.0.7
-# torchvision==0.16.2
-notebook
-ultralytics
+Pillow==11.2.1
+torch==2.1.2+cu121
+torcheval==0.0.7
+torchvision==0.16.2+cu121
+ultralytics==8.3.111
+~pencv_python==4.7.0.72
