@@ -37,6 +37,9 @@
 
 ## 🤖 Model
 
+- **Object Detaction Model**: `YOLO11 model s,m`
+- Based on **YOLO11**, with all layers frozen and fine-tuned using the custom **Platefood** dataset  
+- Credits: [Plate food on Robloflow](https://universe.roboflow.com/subhash-pathirana-cdryb/plate_food/dataset/1/download/yolov11)
 - **Classification Base Model**: `model_best_vloss_resnet34.pth`
 - Based on **ResNet34**, with all layers frozen and fine-tuned using the custom **THFOOD-50** dataset  
 - Credits: [THFOOD-50 on PapersWithCode](https://paperswithcode.com/dataset/thfood-50)
