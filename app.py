@@ -114,8 +114,8 @@ def detect_and_classify(image):
             r.boxes.conf.cpu().numpy(),
             r.boxes.cls.cpu().numpy(),
         ):
-            # if conf > CONF_THRES:
-            #     continue
+            if conf > CONF_THRES:
+                 continue
 
             x1, y1, x2, y2 = map(int, xyxy)
             crop_bgr = img_bgr[y1:y2, x1:x2]
