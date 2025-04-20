@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 
-root_dir = 'datasets\THFOOD50-v1'
+root_dir = './datasets/THFOOD50-v1'
 
 # delete bad images (set to True to auto-delete)
 delete_corrupted = True
