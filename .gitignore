@@ -4,4 +4,4 @@ data/
 datasets/THFOOD50-v1
 flagged/*
 .gradio/
-datasets\README.roboflow.txt
+datasets/README.roboflow.txt

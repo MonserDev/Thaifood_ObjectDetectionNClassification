@@ -18,15 +18,22 @@ from torcheval.metrics.functional import (
     multiclass_accuracy,
     multiclass_f1_score
 )
+#########################################################################################
 
 
+##### Prepare class for classification model #####
 data_dir = r'datasets\THFOOD50-v1'
 train_ds = datasets.ImageFolder(
     root=os.path.join(data_dir, "train")
 )
 
-class_model_dir = r"model"
 
+## Path to the model directories
+class_model_dir = r"models\classification_models"
+detection_model_dir = r"models\detection_models"
+
+
+### Load the ResNet34 model with pretrained weights
 device = "cuda" if torch.cuda.is_available() else "cpu"
 weights = ResNet34_Weights.DEFAULT
 class_model = resnet34(weights=weights)
@@ -34,16 +41,19 @@ num_ftrs = class_model.fc.in_features
 
 # Add Dropout and an intermediate layer for better regularization
 class_model.fc = nn.Sequential(
-    nn.Dropout(p=0.3),                    # 🔁 Dropout before final layer
-    nn.Linear(num_ftrs, len(train_ds.classes))  # Final classifier
+    nn.Dropout(p=0.3),                   
+    nn.Linear(num_ftrs, len(train_ds.classes))  
 )
 class_model = class_model.to(device)
 
+# Load the best model weights
 class_model.load_state_dict(torch.load(os.path.join(class_model_dir, "model_best_resnet34new.pth")))
 class_model.eval()
 
 class_names = train_ds.classes
 
+
+# Define the preprocessing pipeline for the classification model
 preprocess = transforms_v2.Compose([
     transforms_v2.ToImage(),
     transforms_v2.Resize(256),
@@ -53,7 +63,23 @@ preprocess = transforms_v2.Compose([
 ])
 
 # Load YOLOv11 detection and classification models
-detection_model = YOLO(r"datasets\food\runs\detect\train14\weights\best.pt")       # e.g. train14/best.pt
+detection_model = YOLO(os.path.join(detection_model_dir,"best.pt"))       # e.g. train14/best.pt
+
+
+### prepare calorie map ###
+
+def load_calorie_map(file_path):
+    calorie_map = {}
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if '=' in line:
+                name, cal = line.strip().split('=')
+                calorie_map[name.strip()] = int(cal.strip())
+    return calorie_map
+
+# Load the calorie mapping
+menu_calories = load_calorie_map("calories.txt")
+
 
 # Function to process image
 def draw_label(pil_img, text, *, pad=4):
@@ -80,6 +106,7 @@ def detect_and_classify(image):
     results = detection_model(img_bgr)
 
     annotated_crops = []
+    menu = []
 
     for r in results:
         for xyxy, conf, cls in zip(
@@ -95,7 +122,7 @@ def detect_and_classify(image):
             crop_rgb = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2RGB)
             pil_crop = Image.fromarray(crop_rgb)
 
-            # Handle RGBA to RGB if needed
+            # Handle RGBA to RGB
             if pil_crop.mode != "RGB":
                 pil_crop = pil_crop.convert("RGB")
 
@@ -107,21 +134,39 @@ def detect_and_classify(image):
                 class_id = probas.argmax(1).item()
                 score = probas[0][class_id].item()
                 category_name = class_names[class_id]
-            if score < 0.3:
+
+            if score < 0.3: #theshold
                 continue
             # Final label
             label_txt = f"{category_name} ({score:.1%})"
             pil_crop = draw_label(pil_crop, label_txt)
 
             annotated_crops.append(pil_crop)
+            menu.append(category_name)
+    
+    calories = []
+    total_calories = 0
+    if menu:
+        i = 1
+        for e in menu:
+            calories.append(f"🍔 {i}.{e} : {menu_calories.get(e, 'Unknown')} cal")
+            total_calories += menu_calories.get(e, 0)
+            i+=1
 
-    return annotated_crops if annotated_crops else ["No objects detected."]
+    text_output = f"List of detected dishes:\n\n" + "\n".join(calories)+ f"\n\nDetected {i-1} menu" + f"\n\n📜 Total Calories: {total_calories} cal"
+
+    return annotated_crops if annotated_crops else ["No objects detected."], text_output if text_output else ["No objects detected."]
 
 # Gradio UI setup
 iface = gr.Interface(
     fn=detect_and_classify,
     inputs=gr.Image(type="pil", label="📷 Upload Thai Food Image"),
-    outputs=gr.Gallery(label="🍛 Detected & Classified Dishes"),
+
+    outputs=[
+    gr.Gallery(label="🍛 Detected & Classified Dishes"),
+    gr.Textbox(label="📝 Detection Summary", lines=5)
+    ],
+
     title="🍽️ Thai Food Detector & Classifier",
     description="Upload an image containing Thai dishes. The system will detect each dish, crop it, and classify it using YOLOv11."
 )
