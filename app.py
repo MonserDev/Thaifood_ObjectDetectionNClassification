@@ -63,7 +63,7 @@ preprocess = transforms_v2.Compose([
 ])
 
 # Load YOLOv11 detection and classification models
-detection_model = YOLO(os.path.join(detection_model_dir,"best.pt"))       # e.g. train14/best.pt
+detection_model = YOLO(os.path.join(detection_model_dir,"best_modell.pt"))       # e.g. train14/best.pt
 
 
 ### prepare calorie map ###
