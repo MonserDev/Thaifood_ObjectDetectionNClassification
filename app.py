@@ -101,7 +101,8 @@ def draw_label(pil_img, text, *, pad=4):
 
 # ─── callback ─────────────────────────────────────────────────────────────────
 def detect_and_classify(image):
-    CONF_THRES = 0.5
+    CONF_THRES = 0.48
+    count = 0
     img_bgr = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     results = detection_model(img_bgr)
 
@@ -114,9 +115,12 @@ def detect_and_classify(image):
             r.boxes.conf.cpu().numpy(),
             r.boxes.cls.cpu().numpy(),
         ):
-            if conf > CONF_THRES:
+            print(f"Detected {cls} with confidence {conf:.2f}")
+            
+            if conf < CONF_THRES:
+                 print("=================skipping=====================")
                  continue
-
+            
             x1, y1, x2, y2 = map(int, xyxy)
             crop_bgr = img_bgr[y1:y2, x1:x2]
             crop_rgb = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2RGB)
@@ -147,15 +151,15 @@ def detect_and_classify(image):
     calories = []
     total_calories = 0
     if menu:
-        i = 1
+        conut = 1
         for e in menu:
-            calories.append(f"🍔 {i}.{e} : {menu_calories.get(e, 'Unknown')} cal")
+            calories.append(f"🍔 {count}.{e} : {menu_calories.get(e, 'Unknown')} cal")
             total_calories += menu_calories.get(e, 0)
-            i+=1
+            count+=1
 
-    text_output = f"List of detected dishes:\n\n" + "\n".join(calories)+ f"\n\nDetected {i-1} menu" + f"\n\n📜 Total Calories: {total_calories} cal"
+    text_output = f"List of detected dishes:\n\n" + "\n".join(calories)+ f"\n\nDetected {count-1} menu" + f"\n\n📜 Total Calories: {total_calories} cal"
 
-    return annotated_crops if annotated_crops else ["No objects detected."], text_output if text_output else ["No objects detected."]
+    return annotated_crops if annotated_crops else None, text_output if text_output else ["No objects detected."]
 
 # Gradio UI setup
 iface = gr.Interface(
