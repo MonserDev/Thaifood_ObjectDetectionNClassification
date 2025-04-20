@@ -1,6 +1,7 @@
 __pycache__/
 data/
 .ipynb_checkpoints/
-test
-train
-valid
+datasets/THFOOD50-v1
+flagged/*
+.gradio/
+datasets\README.roboflow.txt
